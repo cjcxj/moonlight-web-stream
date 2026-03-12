@@ -4,6 +4,7 @@ import { PageStyle } from "../styles/index.js";
 import { Component, ComponentEvent } from "./index.js";
 import { InputComponent, SelectComponent } from "./input.js";
 import { SidebarEdge } from "./sidebar/index.js";
+import { Language, getLanguage, setLanguage, t } from "../i18n.js";
 
 export type Settings = {
     sidebarEdge: SidebarEdge,
@@ -29,6 +30,7 @@ export type Settings = {
     pageStyle: PageStyle
     hdr: boolean
     useSelectElementPolyfill: boolean
+    language: Language
 }
 
 export type StreamCodec = "h264" | "auto" | "h265" | "av1"
@@ -38,11 +40,12 @@ import DEFAULT_SETTINGS from "../default_settings.js"
 
 export function defaultSettings(): Settings {
     // We are deep cloning this
-    if ("structuredClone" in window) {
-        return structuredClone(DEFAULT_SETTINGS)
-    } else {
-        return JSON.parse(JSON.stringify(DEFAULT_SETTINGS))
-    }
+    const settings: Settings = ("structuredClone" in window) ?
+        structuredClone(DEFAULT_SETTINGS) as any :
+        JSON.parse(JSON.stringify(DEFAULT_SETTINGS))
+    
+    settings.language = getLanguage()
+    return settings
 }
 
 export function getLocalStreamSettings(): Settings | null {
@@ -110,6 +113,7 @@ export class StreamSettingsComponent implements Component {
     private controllerSendIntervalOverride: InputComponent
 
     private otherHeader: HTMLHeadingElement = document.createElement("h2")
+    private language: SelectComponent
     private dataTransport: SelectComponent
     private toggleFullscreenWithKeybind: InputComponent
 
@@ -124,27 +128,27 @@ export class StreamSettingsComponent implements Component {
         this.divElement.classList.add("settings")
 
         // Sidebar
-        this.sidebarHeader.innerText = "Sidebar"
+        this.sidebarHeader.innerText = t("sidebar")
         this.divElement.appendChild(this.sidebarHeader)
 
         this.sidebarEdge = new SelectComponent("sidebarEdge", [
-            { value: "left", name: "Left" },
-            { value: "right", name: "Right" },
-            { value: "up", name: "Up" },
-            { value: "down", name: "Down" },
+            { value: "left", name: t("left") },
+            { value: "right", name: t("right") },
+            { value: "up", name: t("up") },
+            { value: "down", name: t("down") },
         ], {
-            displayName: "Sidebar Edge",
+            displayName: t("sidebar_edge"),
             preSelectedOption: settings?.sidebarEdge ?? defaultSettings_.sidebarEdge,
         })
         this.sidebarEdge.addChangeListener(this.onSettingsChange.bind(this))
         this.sidebarEdge.mount(this.divElement)
 
         // Video
-        this.streamHeader.innerText = "Video"
+        this.streamHeader.innerText = t("video")
         this.divElement.appendChild(this.streamHeader)
 
         // Bitrate
-        this.bitrate = new InputComponent("bitrate", "number", "Bitrate", {
+        this.bitrate = new InputComponent("bitrate", "number", t("bitrate"), {
             defaultValue: defaultSettings_.bitrate.toString(),
             value: settings?.bitrate?.toString(),
             step: "100",
@@ -157,7 +161,7 @@ export class StreamSettingsComponent implements Component {
         this.bitrate.mount(this.divElement)
 
         // Packet Size
-        this.packetSize = new InputComponent("packetSize", "number", "Packet Size", {
+        this.packetSize = new InputComponent("packetSize", "number", t("packet_size"), {
             defaultValue: defaultSettings_.packetSize.toString(),
             value: settings?.packetSize?.toString(),
             step: "100"
@@ -166,7 +170,7 @@ export class StreamSettingsComponent implements Component {
         this.packetSize.mount(this.divElement)
 
         // Fps
-        this.fps = new InputComponent("fps", "number", "Fps", {
+        this.fps = new InputComponent("fps", "number", t("fps"), {
             defaultValue: defaultSettings_.fps.toString(),
             value: settings?.fps?.toString(),
             step: "100"
@@ -185,21 +189,21 @@ export class StreamSettingsComponent implements Component {
                 { value: "custom", name: "custom" }
             ],
             {
-                displayName: "Video Size",
+                displayName: t("video_size"),
                 preSelectedOption: settings?.videoSize || defaultSettings_.videoSize
             }
         )
         this.videoSize.addChangeListener(this.onSettingsChange.bind(this))
         this.videoSize.mount(this.divElement)
 
-        this.videoSizeWidth = new InputComponent("videoSizeWidth", "number", "Video Width", {
+        this.videoSizeWidth = new InputComponent("videoSizeWidth", "number", t("video_width"), {
             defaultValue: defaultSettings_.videoSizeCustom.width.toString(),
             value: settings?.videoSizeCustom.width.toString()
         })
         this.videoSizeWidth.addChangeListener(this.onSettingsChange.bind(this))
         this.videoSizeWidth.mount(this.divElement)
 
-        this.videoSizeHeight = new InputComponent("videoSizeHeight", "number", "Video Height", {
+        this.videoSizeHeight = new InputComponent("videoSizeHeight", "number", t("video_height"), {
             defaultValue: defaultSettings_.videoSizeCustom.height.toString(),
             value: settings?.videoSizeCustom.height.toString()
         })
@@ -207,7 +211,7 @@ export class StreamSettingsComponent implements Component {
         this.videoSizeHeight.mount(this.divElement)
 
         // Video Sample Queue Size
-        this.videoSampleQueueSize = new InputComponent("videoFrameQueueSize", "number", "Video Frame Queue Size", {
+        this.videoSampleQueueSize = new InputComponent("videoFrameQueueSize", "number", t("video_frame_queue_size"), {
             defaultValue: defaultSettings_.videoFrameQueueSize.toString(),
             value: settings?.videoFrameQueueSize?.toString()
         })
@@ -216,26 +220,26 @@ export class StreamSettingsComponent implements Component {
 
         // Codec
         this.videoCodec = new SelectComponent("videoCodec", [
-            { value: "h264", name: "H264" },
-            { value: "auto", name: "Auto (Experimental)" },
-            { value: "h265", name: "H265" },
-            { value: "av1", name: "AV1 (Experimental)" },
+            { value: "h264", name: t("h264") },
+            { value: "auto", name: t("auto_experimental") },
+            { value: "h265", name: t("h265") },
+            { value: "av1", name: t("av1_experimental") },
         ], {
-            displayName: "Video Codec",
+            displayName: t("video_codec"),
             preSelectedOption: settings?.videoCodec ?? defaultSettings_.videoCodec
         })
         this.videoCodec.addChangeListener(this.onSettingsChange.bind(this))
         this.videoCodec.mount(this.divElement)
 
         // Force Video Element renderer
-        this.forceVideoElementRenderer = new InputComponent("forceVideoElementRenderer", "checkbox", "Force Video Element Renderer (WebRTC only)", {
+        this.forceVideoElementRenderer = new InputComponent("forceVideoElementRenderer", "checkbox", t("force_video_element_renderer"), {
             checked: settings?.forceVideoElementRenderer ?? defaultSettings_.forceVideoElementRenderer
         })
         this.forceVideoElementRenderer.addChangeListener(this.onSettingsChange.bind(this))
         this.forceVideoElementRenderer.mount(this.divElement)
 
         // Use Canvas Renderer
-        this.canvasRenderer = new InputComponent("canvasRenderer", "checkbox", "Use Canvas Renderer", {
+        this.canvasRenderer = new InputComponent("canvasRenderer", "checkbox", t("use_canvas_renderer"), {
             defaultValue: defaultSettings_.canvasRenderer.toString(),
             checked: settings === null || settings === void 0 ? void 0 : settings.canvasRenderer
         })
@@ -243,31 +247,31 @@ export class StreamSettingsComponent implements Component {
         this.canvasRenderer.mount(this.divElement)
 
         // Canvas VSync (Canvas only: sync draw to display refresh to reduce tearing; off = lower latency)
-        this.canvasVsync = new InputComponent("canvasVsync", "checkbox", "Canvas VSync (reduce tearing)", {
+        this.canvasVsync = new InputComponent("canvasVsync", "checkbox", t("canvas_vsync"), {
             checked: settings?.canvasVsync ?? defaultSettings_.canvasVsync
         })
         this.canvasVsync.addChangeListener(this.onSettingsChange.bind(this))
         this.canvasVsync.mount(this.divElement)
 
         // HDR
-        this.hdr = new InputComponent("hdr", "checkbox", "Enable HDR", {
+        this.hdr = new InputComponent("hdr", "checkbox", t("enable_hdr"), {
             checked: settings?.hdr ?? defaultSettings_.hdr
         })
         this.hdr.addChangeListener(this.onSettingsChange.bind(this))
         this.hdr.mount(this.divElement)
 
         // Audio local
-        this.audioHeader.innerText = "Audio"
+        this.audioHeader.innerText = t("audio")
         this.divElement.appendChild(this.audioHeader)
 
-        this.playAudioLocal = new InputComponent("playAudioLocal", "checkbox", "Play Audio Local", {
+        this.playAudioLocal = new InputComponent("playAudioLocal", "checkbox", t("play_audio_local"), {
             checked: settings?.playAudioLocal
         })
         this.playAudioLocal.addChangeListener(this.onSettingsChange.bind(this))
         this.playAudioLocal.mount(this.divElement)
 
         // Audio Sample Queue Size
-        this.audioSampleQueueSize = new InputComponent("audioSampleQueueSize", "number", "Audio Sample Queue Size", {
+        this.audioSampleQueueSize = new InputComponent("audioSampleQueueSize", "number", t("audio_sample_queue_size"), {
             defaultValue: defaultSettings_.audioSampleQueueSize.toString(),
             value: settings?.audioSampleQueueSize?.toString()
         })
@@ -275,16 +279,16 @@ export class StreamSettingsComponent implements Component {
         this.audioSampleQueueSize.mount(this.divElement)
 
         // Mouse
-        this.mouseHeader.innerText = "Mouse"
+        this.mouseHeader.innerText = t("mouse")
         this.divElement.appendChild(this.mouseHeader)
 
         this.mouseScrollMode = new SelectComponent("mouseScrollMode",
             [
-                { value: "highres", name: "High Res" },
-                { value: "normal", name: "Normal" }
+                { value: "highres", name: t("high_res") },
+                { value: "normal", name: t("normal") }
             ],
             {
-                displayName: "Scroll Mode",
+                displayName: t("scroll_mode"),
                 preSelectedOption: settings?.mouseScrollMode || defaultSettings_.mouseScrollMode
             }
         )
@@ -293,26 +297,26 @@ export class StreamSettingsComponent implements Component {
 
         // Controller
         if (window.isSecureContext) {
-            this.controllerHeader.innerText = "Controller"
+            this.controllerHeader.innerText = t("controller")
         } else {
-            this.controllerHeader.innerText = "Controller (Disabled: Secure Context Required)"
+            this.controllerHeader.innerText = t("controller_disabled_secure_context")
         }
         this.divElement.appendChild(this.controllerHeader)
 
-        this.controllerInvertAB = new InputComponent("controllerInvertAB", "checkbox", "Invert A and B", {
+        this.controllerInvertAB = new InputComponent("controllerInvertAB", "checkbox", t("invert_ab"), {
             checked: settings?.controllerConfig.invertAB
         })
         this.controllerInvertAB.addChangeListener(this.onSettingsChange.bind(this))
         this.controllerInvertAB.mount(this.divElement)
 
-        this.controllerInvertXY = new InputComponent("controllerInvertXY", "checkbox", "Invert X and Y", {
+        this.controllerInvertXY = new InputComponent("controllerInvertXY", "checkbox", t("invert_xy"), {
             checked: settings?.controllerConfig.invertXY
         })
         this.controllerInvertXY.addChangeListener(this.onSettingsChange.bind(this))
         this.controllerInvertXY.mount(this.divElement)
 
         // Controller Send Interval
-        this.controllerSendIntervalOverride = new InputComponent("controllerSendIntervalOverride", "number", "Override Controller State Send Interval", {
+        this.controllerSendIntervalOverride = new InputComponent("controllerSendIntervalOverride", "number", t("override_controller_interval"), {
             hasEnableCheckbox: true,
             defaultValue: "20",
             value: settings?.controllerConfig.sendIntervalOverride?.toString(),
@@ -331,15 +335,30 @@ export class StreamSettingsComponent implements Component {
         }
 
         // Other
-        this.otherHeader.innerText = "Other"
+        this.otherHeader.innerText = t("other")
         this.divElement.appendChild(this.otherHeader)
+
+        // Language
+        this.language = new SelectComponent("language", [
+            { value: "en-US", name: "English" },
+            { value: "zh-CN", name: "简体中文" },
+        ], {
+            displayName: "Language / 语言",
+            preSelectedOption: getLanguage()
+        })
+        this.language.addChangeListener(() => {
+            const lang = this.language.getValue() as Language
+            setLanguage(lang)
+            window.location.reload()
+        })
+        this.language.mount(this.divElement)
 
         this.dataTransport = new SelectComponent("transport", [
             { value: "auto", name: "Auto" },
-            { value: "webrtc", name: "WebRTC" },
-            { value: "websocket", name: "Web Socket (Experimental)" },
+            { value: "webrtc", name: t("webrtc") },
+            { value: "websocket", name: t("websocket_experimental") },
         ], {
-            displayName: "Data Transport",
+            displayName: t("data_transport"),
             preSelectedOption: settings?.dataTransport ?? defaultSettings_.dataTransport
         })
         this.dataTransport.addChangeListener(this.onSettingsChange.bind(this))
@@ -352,16 +371,16 @@ export class StreamSettingsComponent implements Component {
         this.toggleFullscreenWithKeybind.mount(this.divElement)
 
         this.pageStyle = new SelectComponent("pageStyle", [
-            { value: "standard", name: "Standard" },
-            { value: "moonlight", name: "Moonlight" },
+            { value: "standard", name: t("standard") },
+            { value: "moonlight", name: t("moonlight") },
         ], {
-            displayName: "Style",
+            displayName: t("style"),
             preSelectedOption: settings?.pageStyle ?? defaultSettings_.pageStyle
         })
         this.pageStyle.addChangeListener(this.onSettingsChange.bind(this))
         this.pageStyle.mount(this.divElement)
 
-        this.useSelectElementPolyfill = new InputComponent("useSelectElementPolyfill", "checkbox", "Use Custom Dropdown Implementation", {
+        this.useSelectElementPolyfill = new InputComponent("useSelectElementPolyfill", "checkbox", t("use_custom_dropdown"), {
             checked: settings?.useSelectElementPolyfill ?? defaultSettings_.useSelectElementPolyfill
         })
         this.useSelectElementPolyfill.addChangeListener(this.onSettingsChange.bind(this))
@@ -429,6 +448,8 @@ export class StreamSettingsComponent implements Component {
         settings.hdr = this.hdr.isChecked()
 
         settings.useSelectElementPolyfill = this.useSelectElementPolyfill.isChecked()
+
+        settings.language = this.language.getValue() as Language
 
         return settings
     }

@@ -1,6 +1,7 @@
 import { ComponentEvent } from "../index.js"
 import { InputComponent } from "../input.js"
 import { FormModal } from "./form.js"
+import { t } from "../../i18n.js"
 
 export type UserAuth = {
     name: string,
@@ -18,17 +19,17 @@ export class ApiUserPasswordPrompt extends FormModal<UserAuth> {
     constructor() {
         super()
 
-        this.text.innerText = "Login"
+        this.text.innerText = t("login")
 
-        this.name = new InputComponent("ml-api-name", "text", "Username", {
+        this.name = new InputComponent("ml-api-name", "text", t("username"), {
             formRequired: true
         })
 
-        this.password = new InputComponent("ml-api-password", "password", "Password", {
+        this.password = new InputComponent("ml-api-password", "password", t("password"), {
             formRequired: true
         })
 
-        this.passwordFile = new InputComponent("ml-api-password-file", "file", "Password as File", { accept: ".txt" })
+        this.passwordFile = new InputComponent("ml-api-password-file", "file", t("password_as_file"), { accept: ".txt" })
         this.passwordFile.addChangeListener(this.setFilePassword.bind(this))
     }
 
