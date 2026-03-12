@@ -49,6 +49,7 @@ export function streamStatsToText(statsData: StreamStatsData): string {
         `${t("stats_host_latency", num(statsData.minHostProcessingLatencyMs, "ms"), num(statsData.maxHostProcessingLatencyMs, "ms"), num(statsData.avgHostProcessingLatencyMs, "ms"))}\n` +
         `${t("stats_streamer_latency", num(statsData.minStreamerProcessingTimeMs, "ms"), num(statsData.maxStreamerProcessingTimeMs, "ms"), num(statsData.avgStreamerProcessingTimeMs, "ms"))}\n` +
         `${t("stats_browser_rtt", num(statsData.browserRtt, "ms"))}\n`
+
     for (const key in statsData.transport) {
         const value = statsData.transport[key]
         let valuePretty = value
@@ -57,7 +58,7 @@ export function streamStatsToText(statsData: StreamStatsData): string {
             valuePretty = `${num(value, "ms")}`
         }
 
-        text += `${key}: ${valuePretty}\n`
+        text += `${t(key)}: ${valuePretty}\n`
     }
 
     for (const key in statsData.video) {
@@ -68,7 +69,7 @@ export function streamStatsToText(statsData: StreamStatsData): string {
             valuePretty = `${num(value, "ms")}`
         }
 
-        text += `${key}: ${valuePretty}\n`
+        text += `${t(key)}: ${valuePretty}\n`
     }
 
     for (const key in statsData.audio) {
@@ -79,7 +80,7 @@ export function streamStatsToText(statsData: StreamStatsData): string {
             valuePretty = `${num(value, "ms")}`
         }
 
-        text += `${key}: ${valuePretty}\n`
+        text += `${t(key)}: ${valuePretty}\n`
     }
 
     return text
