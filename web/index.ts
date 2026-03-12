@@ -134,6 +134,7 @@ class MainApp implements Component {
         this.actionElement.classList.add("actions-list")
 
         // Back button
+        this.backButton.innerText = t("back")
         this.backButton.classList.add("button-fit-content")
         this.backButton.addEventListener("click", backAppState)
 

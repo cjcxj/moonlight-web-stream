@@ -3,6 +3,7 @@ import { BIG_BUFFER, ByteBuffer } from "./buffer.js"
 import { Logger } from "./log.js"
 import { Pipe } from "./pipeline/index.js"
 import { DataTransportChannel, Transport } from "./transport/index.js"
+import { t } from "../i18n.js"
 
 export type StatValue = string | number
 
@@ -37,16 +38,17 @@ function num(value: number | null | undefined, suffix?: string): string | null {
 }
 
 export function streamStatsToText(statsData: StreamStatsData): string {
-    let text = `stats:
-video information: ${statsData.videoCodec}, ${statsData.videoWidth}x${statsData.videoHeight}, ${statsData.videoFps} fps
-HDR: ${statsData.hdrEnabled === true ? "Enabled" : statsData.hdrEnabled === false ? "Disabled" : "Unknown"}
-video pipeline: ${statsData.videoPipeline}
-audio pipeline: ${statsData.audioPipeline}
-streamer round trip time: ${num(statsData.streamerRttMs, "ms")} (variance: ${num(statsData.streamerRttVarianceMs, "ms")})
-host processing latency min/max/avg: ${num(statsData.minHostProcessingLatencyMs, "ms")} / ${num(statsData.maxHostProcessingLatencyMs, "ms")} / ${num(statsData.avgHostProcessingLatencyMs, "ms")}
-streamer processing latency min/max/avg: ${num(statsData.minStreamerProcessingTimeMs, "ms")} / ${num(statsData.maxStreamerProcessingTimeMs, "ms")} / ${num(statsData.avgStreamerProcessingTimeMs, "ms")}
-streamer to browser rtt (ws only): ${num(statsData.browserRtt, "ms")}
-`
+    const hdrStatus = statsData.hdrEnabled === true ? t("enabled") : statsData.hdrEnabled === false ? t("disabled") : t("unknown")
+
+    let text = `${t("stats_title")}\n` +
+        `${t("stats_video_info", statsData.videoCodec, statsData.videoWidth, statsData.videoHeight, statsData.videoFps)}\n` +
+        `${t("stats_hdr", hdrStatus)}\n` +
+        `${t("stats_video_pipeline", statsData.videoPipeline)}\n` +
+        `${t("stats_audio_pipeline", statsData.audioPipeline)}\n` +
+        `${t("stats_streamer_rtt", num(statsData.streamerRttMs, "ms"))} ${t("stats_variance", num(statsData.streamerRttVarianceMs, "ms"))}\n` +
+        `${t("stats_host_latency", num(statsData.minHostProcessingLatencyMs, "ms"), num(statsData.maxHostProcessingLatencyMs, "ms"), num(statsData.avgHostProcessingLatencyMs, "ms"))}\n` +
+        `${t("stats_streamer_latency", num(statsData.minStreamerProcessingTimeMs, "ms"), num(statsData.maxStreamerProcessingTimeMs, "ms"), num(statsData.avgStreamerProcessingTimeMs, "ms"))}\n` +
+        `${t("stats_browser_rtt", num(statsData.browserRtt, "ms"))}\n`
     for (const key in statsData.transport) {
         const value = statsData.transport[key]
         let valuePretty = value

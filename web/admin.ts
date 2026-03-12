@@ -96,7 +96,6 @@ class AdminApp implements Component {
         this.userButton.addEventListener("click", async () => {
             window.location.href = buildUrl("/")
         })
-        this.userButton.innerText = t("back")
         this.userButton.classList.add("user-button")
         this.topLineActions.appendChild(this.userButton)
 
