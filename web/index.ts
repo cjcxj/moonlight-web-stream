@@ -115,7 +115,6 @@ class MainApp implements Component {
             await apiLogout(this.api)
             window.location.reload()
         })
-        this.logoutButton.innerText = t("logout")
         this.logoutButton.classList.add("logout-button")
 
         this.loginButton.addEventListener("click", async () => {
@@ -124,25 +123,21 @@ class MainApp implements Component {
                 window.location.reload()
             }
         })
-        this.loginButton.innerText = t("login")
         this.loginButton.classList.add("login-button")
 
         this.adminButton.addEventListener("click", async () => {
             window.location.href = buildUrl("/admin.html")
         })
-        this.adminButton.innerText = t("admin")
         this.adminButton.classList.add("admin-button")
 
         // Actions
         this.actionElement.classList.add("actions-list")
 
         // Back button
-        this.backButton.innerText = t("back")
         this.backButton.classList.add("button-fit-content")
         this.backButton.addEventListener("click", backAppState)
 
         // Host add button
-        this.hostAddButton.innerText = t("add_host")
         this.hostAddButton.classList.add("host-add")
         this.hostAddButton.addEventListener("click", this.addHost.bind(this))
 
@@ -151,7 +146,6 @@ class MainApp implements Component {
         this.hostList.addHostOpenListener(this.onHostOpen.bind(this))
 
         // Settings Button
-        this.settingsButton.innerText = t("settings")
         this.settingsButton.classList.add("open-settings")
         this.settingsButton.addEventListener("click", () => this.setCurrentDisplay("settings"))
 

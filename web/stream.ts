@@ -193,7 +193,7 @@ class ViewerApp implements Component {
         if (data.type == "app") {
             const app = data.app
 
-            document.title = `Stream: ${app.title}`
+            document.title = `${t("stream_title_prefix")}${app.title}`
         } else if (data.type == "connectionComplete") {
             this.sidebar.onCapabilitiesChange(data.capabilities)
         }
@@ -625,7 +625,7 @@ class ConnectionInfoModal implements Modal<void> {
                 showErrorPopup(data.line)
             }
         } else if (data.type == "serverMessage") {
-            const text = `Server: ${data.message}`
+            const text = `${t("server_message_prefix")}${data.message}`
             this.text.innerText = text
             this.debugLog(text)
         }

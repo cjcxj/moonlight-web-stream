@@ -5,6 +5,7 @@ import { setContextMenu } from "../context_menu.js";
 import { showMessage } from "../modal/index.js";
 import { APP_NO_IMAGE } from "../../resources/index.js";
 import { buildUrl } from "../../config_.js";
+import { t } from "../../i18n.js";
 
 export type GameCache = App & { activeApp: number | null }
 
@@ -97,7 +98,7 @@ export class Game implements Component {
 
             if (this.isActive()) {
                 elements.push({
-                    name: "Resume Session",
+                    name: t("resume_session"),
                     callback: async () => {
                         this.startStream()
 
@@ -108,11 +109,11 @@ export class Game implements Component {
             }
 
             elements.push({
-                name: "Stop Current Session",
+                name: t("stop_current_session"),
                 callback: async () => {
                     const response = await apiHostCancel(this.api, { host_id: this.hostId })
                     if (!response.success) {
-                        await showMessage("Failed to close app!")
+                        await showMessage(t("failed_close_app"))
                     }
 
                     const event = new ComponentEvent("ml-gamereload", this)
@@ -151,7 +152,7 @@ export class Game implements Component {
         const elements = []
 
         elements.push({
-            name: "Show Details",
+            name: t("show_details"),
             callback: this.showDetails.bind(this),
         })
 
@@ -174,9 +175,9 @@ export class Game implements Component {
         const app = this.cache
 
         await showMessage(
-            `Title: ${app.title}\n` +
-            `Id: ${app.app_id}\n` +
-            `HDR Supported: ${app.is_hdr_supported}\n`
+            `${t("title_label")}: ${app.title}\n` +
+            `${t("id_label")}: ${app.app_id}\n` +
+            `${t("hdr_supported")}: ${app.is_hdr_supported}\n`
         )
     }
 

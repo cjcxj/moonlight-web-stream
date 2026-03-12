@@ -4,6 +4,7 @@ import { DetailedUser, PatchUserRequest, UserRole } from "../../api_bindings.js"
 import { InputComponent, SelectComponent } from "../input.js";
 import { createSelectRoleInput } from "./role_select.js";
 import { tryDeleteUser, UserEventListener } from "./index.js";
+import { t } from "../../i18n.js";
 
 export class DetailedUserPage implements Component {
 
@@ -28,20 +29,20 @@ export class DetailedUserPage implements Component {
 
         this.formRoot.classList.add("user-info")
 
-        this.idElement = new InputComponent("userId", "number", "User Id", {
+        this.idElement = new InputComponent("userId", "number", t("user_id"), {
             defaultValue: `${user.id}`
         })
         this.idElement.setEnabled(false)
         this.idElement.mount(this.formRoot)
 
-        this.name = new InputComponent("userName", "text", "User Name", {
+        this.name = new InputComponent("userName", "text", t("user_name"), {
             defaultValue: user.name,
         })
         this.name.setEnabled(false)
         this.name.mount(this.formRoot)
 
-        this.password = new InputComponent("userPassword", "text", "Password", {
-            placeholer: "New Password",
+        this.password = new InputComponent("userPassword", "text", t("password"), {
+            placeholder: "New Password",
             formRequired: true,
             hasEnableCheckbox: true
         })
@@ -51,18 +52,18 @@ export class DetailedUserPage implements Component {
         this.role = createSelectRoleInput(user.role)
         this.role.mount(this.formRoot)
 
-        this.clientUniqueId = new InputComponent("userClientUniqueId", "text", "Moonlight Client Id", {
+        this.clientUniqueId = new InputComponent("userClientUniqueId", "text", t("moonlight_client_id"), {
             defaultValue: user.client_unique_id,
         })
         this.clientUniqueId.mount(this.formRoot)
 
-        this.applyButton.innerText = "Apply"
+        this.applyButton.innerText = t("apply")
         this.applyButton.type = "submit"
         this.formRoot.appendChild(this.applyButton)
 
         this.deleteButton.addEventListener("click", this.delete.bind(this))
         this.deleteButton.classList.add("user-info-delete")
-        this.deleteButton.innerText = "Delete"
+        this.deleteButton.innerText = t("delete")
         this.deleteButton.type = "button"
         this.formRoot.appendChild(this.deleteButton)
 

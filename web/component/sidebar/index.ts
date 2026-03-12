@@ -1,5 +1,6 @@
 import { Component } from "../index.js"
 import { showErrorPopup } from "../error.js"
+import { t } from "../../i18n.js"
 
 export interface Sidebar extends Component {
     extended(): void
@@ -50,7 +51,7 @@ export function isSidebarExtended(): boolean {
 
 export function setSidebar(sidebar: Sidebar | null) {
     if (sidebarParent == null || sidebarRoot == null) {
-        showErrorPopup("failed to get sidebar")
+        showErrorPopup(t("sidebar_error"))
         return
     }
 

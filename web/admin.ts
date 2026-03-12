@@ -78,8 +78,7 @@ class AdminApp implements Component {
         // Top Line
         this.topLine.classList.add("top-line")
 
-        this.moonlightTextElement.innerHTML =
-            'Moonlight Web <span style="color:red; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; -webkit-text-stroke: 2px #000">Admin</span>'
+        this.moonlightTextElement.innerHTML = t("admin_panel_title")
 
         this.topLine.appendChild(this.moonlightTextElement)
 
@@ -90,7 +89,7 @@ class AdminApp implements Component {
             await apiLogout(this.api)
             window.location.reload()
         })
-        this.logoutButton.innerText = t("logout")
+
         this.logoutButton.classList.add("logout-button")
         this.topLineActions.appendChild(this.logoutButton)
 
