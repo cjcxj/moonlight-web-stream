@@ -42,7 +42,7 @@ export class DetailedUserPage implements Component {
         this.name.mount(this.formRoot)
 
         this.password = new InputComponent("userPassword", "text", t("password"), {
-            placeholder: "New Password",
+            placeholer: "New Password",
             formRequired: true,
             hasEnableCheckbox: true
         })

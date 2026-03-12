@@ -161,24 +161,22 @@ export class Host implements Component {
         this.updateCache(host, this.userCache)
 
         await showMessage(
-            await showMessage(
-                `${t("web_id")}: ${host.host_id}\n` +
-                `${t("name_label")}: ${host.name}\n` +
-                `${t("pair_status")}: ${host.paired}\n` +
-                `${t("state")}: ${host.server_state}\n` +
-                `${t("address_label")}: ${host.address}\n` +
-                `${t("http_port")}: ${host.http_port}\n` +
-                `${t("https_port")}: ${host.https_port}\n` +
-                `${t("external_port")}: ${host.external_port}\n` +
-                `${t("version")}: ${host.version}\n` +
-                `${t("gfe_version")}: ${host.gfe_version}\n` +
-                `${t("unique_id")}: ${host.unique_id}\n` +
-                `${t("mac")}: ${host.mac}\n` +
-                `${t("local_ip")}: ${host.local_ip}\n` +
-                `${t("current_game_label")}: ${host.current_game}\n` +
-                `${t("max_luma_pixels_hevc")}: ${host.max_luma_pixels_hevc}\n` +
-                `${t("server_codec_mode_support")}: ${host.server_codec_mode_support}`
-            )
+            `${t("web_id")}: ${host.host_id}\n` +
+            `${t("name_label")}: ${host.name}\n` +
+            `${t("pair_status")}: ${host.paired}\n` +
+            `${t("state")}: ${host.server_state}\n` +
+            `${t("address_label")}: ${host.address}\n` +
+            `${t("http_port")}: ${host.http_port}\n` +
+            `${t("https_port")}: ${host.https_port}\n` +
+            `${t("external_port")}: ${host.external_port}\n` +
+            `${t("version")}: ${host.version}\n` +
+            `${t("gfe_version")}: ${host.gfe_version}\n` +
+            `${t("unique_id")}: ${host.unique_id}\n` +
+            `${t("mac")}: ${host.mac}\n` +
+            `${t("local_ip")}: ${host.local_ip}\n` +
+            `${t("current_game_label")}: ${host.current_game}\n` +
+            `${t("max_luma_pixels_hevc")}: ${host.max_luma_pixels_hevc}\n` +
+            `${t("server_codec_mode_support")}: ${host.server_codec_mode_support}`
         )
     }
 
