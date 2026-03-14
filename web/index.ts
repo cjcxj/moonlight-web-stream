@@ -13,8 +13,10 @@ import { getLocalStreamSettings, setLocalStreamSettings, StreamSettingsComponent
 import { setTouchContextMenuEnabled } from "./polyfill/ios_right_click.js";
 import { buildUrl } from "./config_.js";
 import { setStyle as setPageStyle } from "./styles/index.js";
+import { initI18n, t } from "./i18n.js";
 
 async function startApp() {
+    initI18n()
     setTouchContextMenuEnabled(true)
 
     const api = await getApi()
@@ -103,7 +105,7 @@ class MainApp implements Component {
         // Top Line
         this.topLine.classList.add("top-line")
 
-        this.moonlightTextElement.innerHTML = "Moonlight Web"
+        this.moonlightTextElement.innerHTML = t("app_name")
         this.topLine.appendChild(this.moonlightTextElement)
 
         this.topLine.appendChild(this.topLineActions)
@@ -132,7 +134,7 @@ class MainApp implements Component {
         this.actionElement.classList.add("actions-list")
 
         // Back button
-        this.backButton.innerText = "Back"
+        this.backButton.innerText = t("back")
         this.backButton.classList.add("button-fit-content")
         this.backButton.addEventListener("click", backAppState)
 
@@ -185,7 +187,7 @@ class MainApp implements Component {
                 if (e instanceof FetchError) {
                     const response = e.getResponse()
                     if (response && response.status == 404) {
-                        showErrorPopup(`Host "${host.address}" is not reachable`)
+                        showErrorPopup(t("host_not_reachable", host.address))
                         return
                     }
                 }
@@ -200,7 +202,7 @@ class MainApp implements Component {
         if (this.currentDisplay == "hosts" || this.currentDisplay == "games") {
             const elements = [
                 {
-                    name: "Reload",
+                    name: t("reload"),
                     callback: this.forceFetch.bind(this)
                 }
             ]

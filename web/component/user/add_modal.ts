@@ -2,6 +2,7 @@ import { PostUserRequest, UserRole } from "../../api_bindings.js";
 import { InputComponent, SelectComponent } from "../input.js";
 import { FormModal } from "../modal/form.js";
 import { createSelectRoleInput } from "./role_select.js";
+import { t } from "../../i18n.js";
 
 export class AddUserModal extends FormModal<PostUserRequest> {
 
@@ -15,19 +16,19 @@ export class AddUserModal extends FormModal<PostUserRequest> {
     constructor() {
         super()
 
-        this.header.innerText = "User"
+        this.header.innerText = t("user")
 
-        this.name = new InputComponent("userName", "text", "Name", {
+        this.name = new InputComponent("userName", "text", t("name_label"), {
             formRequired: true
         })
 
-        this.defaultPassword = new InputComponent("userPassword", "text", "Default Password", {
+        this.defaultPassword = new InputComponent("userPassword", "text", t("password"), {
             formRequired: true
         })
 
         this.role = createSelectRoleInput("User")
 
-        this.clientUniqueId = new InputComponent("userClientUniqueId", "text", "Moonlight Client Id", {
+        this.clientUniqueId = new InputComponent("userClientUniqueId", "text", t("moonlight_client_id"), {
             formRequired: true,
             hasEnableCheckbox: true
         })

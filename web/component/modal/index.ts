@@ -1,6 +1,7 @@
 import { Component } from "../index.js"
 import { showErrorPopup } from "../error.js"
 import { FormModal } from "./form.js"
+import { t } from "../../i18n.js"
 
 export interface Modal<Output> extends Component {
     onFinish(abort: AbortSignal): Promise<Output>
@@ -22,11 +23,11 @@ export function getModalBackground(): HTMLElement | null {
 
 export async function showModal<Output>(modal: Modal<Output> | null): Promise<Output | null> {
     if (modalParent == null) {
-        showErrorPopup("cannot find modal parent")
+        showErrorPopup(t("sidebar_error"))
         return null
     }
     if (modalBackground == null) {
-        showErrorPopup("the modal overlay cannot be found")
+        showErrorPopup(t("error_element_not_found"))
     }
 
     if (modalAbort != null) {
@@ -125,7 +126,7 @@ class MessageModal implements Component, Modal<void> {
     constructor(message: string, init?: MessageInit) {
         this.textElement.innerText = message
 
-        this.okButton.innerText = "Ok"
+        this.okButton.innerText = t("ok")
 
         this.signal = init?.signal
     }

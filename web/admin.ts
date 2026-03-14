@@ -11,8 +11,10 @@ import { buildUrl } from "./config_.js";
 import { DetailedUserPage } from "./component/user/detailed_page.js";
 import { User } from "./component/user/index.js";
 import { DetailedUser } from "./api_bindings.js";
+import { initI18n, t } from "./i18n.js";
 
 async function startApp() {
+    initI18n()
     setTouchContextMenuEnabled(true)
 
     const api = await getApi()
@@ -35,7 +37,7 @@ async function checkPermissions(api: Api) {
     const user = await apiGetUser(api)
 
     if (user.role != "Admin") {
-        await showMessage("You are not authorized to view this page!")
+        await showMessage(t("not_authorized"))
 
         window.location.href = buildUrl("/")
     }
@@ -76,8 +78,7 @@ class AdminApp implements Component {
         // Top Line
         this.topLine.classList.add("top-line")
 
-        this.moonlightTextElement.innerHTML =
-            'Moonlight Web <span style="color:red; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; -webkit-text-stroke: 2px #000">Admin</span>'
+        this.moonlightTextElement.innerHTML = t("admin_panel_title")
 
         this.topLine.appendChild(this.moonlightTextElement)
 
@@ -88,6 +89,7 @@ class AdminApp implements Component {
             await apiLogout(this.api)
             window.location.reload()
         })
+
         this.logoutButton.classList.add("logout-button")
         this.topLineActions.appendChild(this.logoutButton)
 
@@ -107,7 +109,7 @@ class AdminApp implements Component {
         this.userPanel.classList.add("user-panel")
         this.content.appendChild(this.userPanel)
 
-        this.addUserButton.innerText = "Add User"
+        this.addUserButton.innerText = t("add_user")
         this.addUserButton.addEventListener("click", async () => {
             const addUserModal = new AddUserModal()
 
@@ -122,7 +124,7 @@ class AdminApp implements Component {
                     // 409 = Conflict
                     if (e instanceof FetchError && e.getResponse()?.status == 409) {
                         // Name already exists
-                        await showMessage(`A user with the name "${userRequest.name}" already exists!`)
+                        await showMessage(t("user_already_exists", userRequest.name))
                     } else {
                         throw e
                     }
@@ -131,7 +133,7 @@ class AdminApp implements Component {
         })
         this.userPanel.appendChild(this.addUserButton)
 
-        this.userSearch.placeholder = "Search User"
+        this.userSearch.placeholder = t("search_user")
         this.userSearch.type = "text"
         this.userSearch.addEventListener("input", this.onUserSearchChange.bind(this))
         this.userPanel.appendChild(this.userSearch)

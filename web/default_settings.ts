@@ -40,7 +40,8 @@ const trueDefaultSettings: Settings =
     // possible values: "standard", "old"
     "pageStyle": "standard",
     "hdr": false,
-    "useSelectElementPolyfill": false
+    "useSelectElementPolyfill": false,
+    "language": "en-US"
 }
 
 function assignIfMissing(target: any, source: any) {

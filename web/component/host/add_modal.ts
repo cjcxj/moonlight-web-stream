@@ -1,6 +1,7 @@
 import { PostHostRequest } from "../../api_bindings.js"
 import { InputComponent } from "../input.js"
 import { FormModal } from "../modal/form.js"
+import { t } from "../../i18n.js"
 
 export class AddHostModal extends FormModal<PostHostRequest> {
 
@@ -12,13 +13,13 @@ export class AddHostModal extends FormModal<PostHostRequest> {
     constructor() {
         super()
 
-        this.header.innerText = "Host"
+        this.header.innerText = t("host")
 
-        this.address = new InputComponent("address", "text", "Address", {
+        this.address = new InputComponent("address", "text", t("address"), {
             formRequired: true
         })
 
-        this.httpPort = new InputComponent("httpPort", "text", "Port", {
+        this.httpPort = new InputComponent("httpPort", "text", t("port"), {
             inputMode: "numeric"
         })
     }

@@ -5,6 +5,7 @@ import { setContextMenu } from "../context_menu.js"
 import { showErrorPopup } from "../error.js"
 import { showMessage } from "../modal/index.js"
 import { HOST_IMAGE, HOST_OVERLAY_LOCK, HOST_OVERLAY_NONE, HOST_OVERLAY_OFFLINE } from "../../resources/index.js"
+import { t } from "../../i18n.js"
 
 export type HostEventListener = (event: ComponentEvent<Host>) => void
 
@@ -90,29 +91,29 @@ export class Host implements Component {
 
         if (this.cache?.server_state != null) {
             elements.push({
-                name: "Show Details",
+                name: t("show_details"),
                 callback: this.showDetails.bind(this),
             })
 
             elements.push({
-                name: "Open",
+                name: t("open"),
                 callback: this.onClick.bind(this)
             })
         } else if (this.cache?.paired == "Paired") {
             elements.push({
-                name: "Send Wake Up Packet",
+                name: t("send_wake_up"),
                 callback: this.wakeUp.bind(this)
             })
         }
 
         elements.push({
-            name: "Reload",
+            name: t("reload"),
             callback: async () => this.forceFetch()
         })
 
         if (this.cache?.server_state != null && this.cache?.paired == "NotPaired") {
             elements.push({
-                name: "Pair",
+                name: t("pair"),
                 callback: this.pair.bind(this)
             })
         }
@@ -121,13 +122,13 @@ export class Host implements Component {
         if (this.userCache?.role == "Admin") {
             if (this.cache?.owner == "Global") {
                 elements.push({
-                    name: "Make Private",
+                    name: t("make_private"),
                     callback: this.makePrivate.bind(this),
                     classes: ["context-menu-element-red"]
                 })
             } else if (this.cache?.owner == "ThisUser") {
                 elements.push({
-                    name: "Make Global",
+                    name: t("make_global"),
                     callback: this.makeGlobal.bind(this),
                     classes: ["context-menu-element-red"]
                 })
@@ -136,7 +137,7 @@ export class Host implements Component {
 
         if (this.cache?.owner == "ThisUser" || this.userCache?.role == "Admin") {
             elements.push({
-                name: "Remove Host",
+                name: t("remove_host"),
                 callback: this.remove.bind(this)
             })
         }
@@ -154,28 +155,28 @@ export class Host implements Component {
             })
         }
         if (!host || !isDetailedHost(host)) {
-            showErrorPopup(`failed to get details for host ${this.hostId}`)
+            showErrorPopup(t("sidebar_error") + ` ${this.hostId}`)
             return;
         }
         this.updateCache(host, this.userCache)
 
         await showMessage(
-            `Web Id: ${host.host_id}\n` +
-            `Name: ${host.name}\n` +
-            `Pair Status: ${host.paired}\n` +
-            `State: ${host.server_state}\n` +
-            `Address: ${host.address}\n` +
-            `Http Port: ${host.http_port}\n` +
-            `Https Port: ${host.https_port}\n` +
-            `External Port: ${host.external_port}\n` +
-            `Version: ${host.version}\n` +
-            `Gfe Version: ${host.gfe_version}\n` +
-            `Unique ID: ${host.unique_id}\n` +
-            `MAC: ${host.mac}\n` +
-            `Local IP: ${host.local_ip}\n` +
-            `Current Game: ${host.current_game}\n` +
-            `Max Luma Pixels Hevc: ${host.max_luma_pixels_hevc}\n` +
-            `Server Codec Mode Support: ${host.server_codec_mode_support}`
+            `${t("web_id")}: ${host.host_id}\n` +
+            `${t("name_label")}: ${host.name}\n` +
+            `${t("pair_status")}: ${host.paired}\n` +
+            `${t("state")}: ${host.server_state}\n` +
+            `${t("address_label")}: ${host.address}\n` +
+            `${t("http_port")}: ${host.http_port}\n` +
+            `${t("https_port")}: ${host.https_port}\n` +
+            `${t("external_port")}: ${host.external_port}\n` +
+            `${t("version")}: ${host.version}\n` +
+            `${t("gfe_version")}: ${host.gfe_version}\n` +
+            `${t("unique_id")}: ${host.unique_id}\n` +
+            `${t("mac")}: ${host.mac}\n` +
+            `${t("local_ip")}: ${host.local_ip}\n` +
+            `${t("current_game_label")}: ${host.current_game}\n` +
+            `${t("max_luma_pixels_hevc")}: ${host.max_luma_pixels_hevc}\n` +
+            `${t("server_codec_mode_support")}: ${host.server_codec_mode_support}`
         )
     }
 
@@ -230,14 +231,14 @@ export class Host implements Component {
             host_id: this.getHostId()
         })
 
-        await showMessage("Sent Wake Up packet. It might take a moment for your pc to start.")
+        await showMessage(t("pc_wake_up_hint"))
     }
     private async pair() {
         if (this.cache?.paired == "Paired") {
             await this.forceFetch()
 
             if (this.cache?.paired == "Paired") {
-                showMessage("This host is already paired!")
+                showMessage(t("already_paired_hint"))
                 return;
             }
         }
@@ -251,7 +252,7 @@ export class Host implements Component {
         }
 
         const messageAbort = new AbortController()
-        showMessage(`Please pair your host ${this.getCache()?.name} with this pin:\nPin: ${responseStream.response.Pin}`, { signal: messageAbort.signal })
+        showMessage(t("pair_pin_hint", this.getCache()?.name ?? "", responseStream.response.Pin), { signal: messageAbort.signal })
 
         const resultResponse = await responseStream.next()
         messageAbort.abort()
