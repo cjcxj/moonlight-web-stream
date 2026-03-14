@@ -43,7 +43,7 @@ export function defaultSettings(): Settings {
     const settings: Settings = ("structuredClone" in window) ?
         structuredClone(DEFAULT_SETTINGS) as any :
         JSON.parse(JSON.stringify(DEFAULT_SETTINGS))
-    
+
     settings.language = getLanguage()
     return settings
 }
@@ -373,6 +373,7 @@ export class StreamSettingsComponent implements Component {
         this.pageStyle = new SelectComponent("pageStyle", [
             { value: "standard", name: t("standard") },
             { value: "moonlight", name: t("moonlight") },
+            { value: "youthful", name: t("youthful") },
         ], {
             displayName: t("style"),
             preSelectedOption: settings?.pageStyle ?? defaultSettings_.pageStyle
